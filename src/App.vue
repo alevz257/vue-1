@@ -1,17 +1,58 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+ <div
+    id="app"
+    class="small-container"
+  >
+    <h1>Ticket</h1>
+
+    <ticket-form @add:ticket="addTicket" />
+    <ticket-table
+      :tickets="tickets"
+      @delete:ticket="deleteTickets"
+      @edit:ticket="editTickets"
+    />
+    
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+//import HelloWorld from './components/HelloWorld.vue'
+import TicketForm from './components/TicketForm.vue'
+import TicketTable from '@/components/TicketTable.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    TicketForm,
+    TicketTable
+  },
+  data(){
+    return {
+      tickets: [
+        {
+          id: 1,
+          sendername: 'Test1',
+          senderemail: 'test1@test.com',
+          message: 'testing'
+        },
+        {
+          id: 2,
+          sendername: 'Test2',
+          senderemail: 'test2@test.com',
+          message: 'testing'
+        }
+      ]
+    }
+  },
+  methods: {
+    editTickets(id, updatedTicket){
+      this.tickets = this.tickets.map (ticket => ticket.id === id ? updatedTicket: ticket)
+    },
+    deleteTickets(id){
+      this.tickets = this.tickets.filter(
+        ticket => ticket.id !== id
+      )
+    }
   }
 }
 </script>
@@ -25,4 +66,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
+.small-container {
+    max-width: 680px;
+  }
 </style>
