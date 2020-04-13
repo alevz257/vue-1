@@ -1,0 +1,10 @@
+{
+	"auth": {
+		"vueapp4a98b512": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
+		}
+	}
+}

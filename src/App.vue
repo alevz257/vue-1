@@ -1,72 +1,69 @@
 <template>
- <div
-    id="app"
-    class="small-container"
-  >
-    <h1>Ticket</h1>
-
-    <ticket-form @add:ticket="addTicket" />
-    <ticket-table
-      :tickets="tickets"
-      @delete:ticket="deleteTickets"
-      @edit:ticket="editTickets"
-    />
-    
+  <div id='app'>
+    <div  class='nav'>
+      <router-link tag="p" to="/">
+        <a>Ticket</a>
+      </router-link>
+      <router-link tag="p" to="/auth" v-if="!signedIn">
+        <a>Sign Up / Sign In</a>
+      </router-link>
+    </div>
+    <router-view></router-view>
+    <div class='sign-out'>
+      <amplify-sign-out v-if="signedIn"></amplify-sign-out>
+    </div>
   </div>
 </template>
 
 <script>
-//import HelloWorld from './components/HelloWorld.vue'
-import TicketForm from './components/TicketForm.vue'
-import TicketTable from '@/components/TicketTable.vue'
+import { AmplifyEventBus } from 'aws-amplify-vue'
+import { Auth } from 'aws-amplify'
 
 export default {
-  name: 'App',
-  components: {
-    TicketForm,
-    TicketTable
-  },
-  data(){
+  name: 'app',
+  data() {
     return {
-      tickets: [
-        {
-          id: 1,
-          sendername: 'Test1',
-          senderemail: 'test1@test.com',
-          message: 'testing'
-        },
-        {
-          id: 2,
-          sendername: 'Test2',
-          senderemail: 'test2@test.com',
-          message: 'testing'
-        }
-      ]
+      signedIn: false
     }
   },
-  methods: {
-    editTickets(id, updatedTicket){
-      this.tickets = this.tickets.map (ticket => ticket.id === id ? updatedTicket: ticket)
-    },
-    deleteTickets(id){
-      this.tickets = this.tickets.filter(
-        ticket => ticket.id !== id
+  beforeCreate() {
+    AmplifyEventBus.$on('authState', info => {
+      if (info === 'signedIn') {
+        this.signedIn = true
+        this.$router.push('/')
+      }
+      if (info === 'signedOut') {
+        this.$router.push('/auth')
+        this.signedIn = false
+      }
+    });
+
+    Auth.currentAuthenticatedUser()
+      .then(
+        this.signedIn = true
       )
-    }
+      .catch(() => this.signedIn = false)
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.nav {
+  display: flex;
 }
-.small-container {
-    max-width: 680px;
-  }
+.nav p {
+  padding: 0px 30px 0px 0px;
+  font-size: 18px;
+  color: #000;
+}
+.nav p:hover {
+  opacity: .7;
+}
+.nav p a {
+  text-decoration: none;
+}
+.sign-out {
+  width: 160px;
+  margin: 0 auto;
+}
 </style>
