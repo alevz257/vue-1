@@ -5,7 +5,7 @@
   >
     <h1>Ticket</h1>
 
-    <ticket-form @add:ticket="addTicket" />
+    <ticket-form/>
     <ticket-table
       :tickets="tickets"
       @delete:ticket="deleteTickets"
@@ -20,6 +20,7 @@
 import TicketForm from './TicketForm.vue'
 import TicketTable from './TicketTable.vue'
 
+
 export default {
   name: 'App',
   components: {
@@ -28,20 +29,7 @@ export default {
   },
   data(){
     return {
-      tickets: [
-        {
-          id: 1,
-          sendername: 'Test1',
-          senderemail: 'test1@test.com',
-          message: 'testing'
-        },
-        {
-          id: 2,
-          sendername: 'Test2',
-          senderemail: 'test2@test.com',
-          message: 'testing'
-        }
-      ]
+      tickets: [],
     }
   },
   methods: {

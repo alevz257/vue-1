@@ -6,5 +6,23 @@
 			"dependsOn": [],
 			"customAuth": false
 		}
+	},
+	"api": {
+		"ticketapp": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"authConfig": {
+					"additionalAuthenticationProviders": [],
+					"defaultAuthentication": {
+						"authenticationType": "API_KEY",
+						"apiKeyConfig": {
+							"description": "dev",
+							"apiKeyExpirationDays": 7
+						}
+					}
+				}
+			}
+		}
 	}
 }

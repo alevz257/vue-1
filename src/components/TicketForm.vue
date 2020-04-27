@@ -8,7 +8,7 @@
         ref="first"
         type="text"
         class= "contact-form__input contact-form__input--text"
-        v-model="ticket.sendername"
+        v-model="name"
         @focus="clearStatus"
         @keypress="clearStatus"
       >
@@ -18,7 +18,7 @@
       <input
         type="text"
         class= "contact-form__input contact-form__input--text"
-        v-model="ticket.senderemail"
+        v-model="email"
         @focus="clearStatus"
       >
       </div>
@@ -27,7 +27,7 @@
       <textarea
         type="textarea"
         class= "contact-form__input contact-form__input--textarea"
-        v-model="ticket.message"
+        v-model="message"
         placeholder="Please define your issue"
         rows="6"
         cols="65"
@@ -49,6 +49,9 @@
 </template>
 
 <script>
+import { API } from 'aws-amplify';
+import { createTicket } from '../graphql/mutations';
+
 export default {
   name: 'ticket-form',
   data() {
@@ -56,44 +59,35 @@ export default {
       error: false,
       submitting: false,
       success: false,
-      ticket: {
-        sendername: '',
-        senderemail: '',
-        message: '',
-      }
+      name: '',
+      email: '',
+      message: ''
     }
   },
-  computed: {
-    invalidName() {
-      return this.ticket.sendername === ''
-    },
-    invalidEmail() {
-      return this.ticket.senderemail === ''
-    },
-  },
   methods: {
-    handleSubmit() {
+    async handleSubmit() {
       this.clearStatus()
       this.submitting = true
-      if (this.invalidName || this.invalidEmail) {
-        this.error = true
-        return
-      }
-      this.$emit('add:ticket', this.ticket)
-      this.$refs.first.focus()
-      this.ticket = {
-        sendername: '',
-        senderemail: '',
-        message: '',
-      }
+      
+      const {name, email, message} = this;
+      if (!this.name||!this.email||!this.message) return;
+      const ticket = {name, email, message};
+
+      await API.graphql({
+        query: createTicket,
+        variables: {input: ticket},
+      });
       this.success = true
       this.error = false
       this.submitting = false
+      this.name ='';
+      this.email = '';
+      this.message = '';
     },
     clearStatus() {
       this.success = false
       this.error = false
-    }
+    },
   }}
 </script>
 
